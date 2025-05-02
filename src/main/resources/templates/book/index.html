@@ -15,8 +15,9 @@
             <div class="inner_contens">
                 <div class="page_title">書籍一覧</div>
                 <!-- 書籍登録ボタン -->
-                <a th:href="@{/book/add}">
-                    <button type="button">書籍登録</button>
+                <div class="top-bar">
+                    <a th:href="@{/book/add}" class="register-button"><img th:src="@{/images/icons/add.png}" alt="アイコン" style="height: 16px; vertical-align: middle; margin-right: 5px;">書籍登録</a>
+                </div>
                 </a>
                 <!-- 書籍一覧テーブル -->
                 <table>
@@ -28,7 +29,15 @@
                     </thead>
                     <tbody>
                         <tr th:each="book : ${bookMstList}">
-                            <td th:text="${book.title}">書籍名</td>
+                            <td>
+                                <a th:href="@{/book/trash}" class="trash_btn">
+                                    <img class="trash_btn" th:src="@{/images/icons/trash.png}" alt="削除アイコン">
+                                </a>
+                            <a th:href="@{/book/edit}" class="edit_btn">
+                                <img class="edit_btn" th:src="@{/images/icons/edit.png}" alt="追加アイコン">
+                            </a>
+                            <span th:text="${book.title}">書籍名</span>
+                        </td>
                             <td th:text="${book.isbn}">ISBN</td>
                         </tr>
                     </tbody>
@@ -39,3 +48,5 @@
     <div th:replace="~{common :: footer}"></div>
 </body>eplace="~{common :: footer}"></div>
 </body>
+
+
