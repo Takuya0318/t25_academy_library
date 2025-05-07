@@ -3,7 +3,7 @@
 
 <head th:replace="~{common :: meta_header('書籍登録',~{::link},~{::script})}">
     <title th:text="${title}+' | MTLibrary'"></title>
-    <link rel="stylesheet" th:href="@{/css/book/add.css}" />
+    <link rel="stylesheet" th:href="@{/css/book/edit.css}" />
     <script type="text/javascript" th:src="@{/js/book/add.js}"></script>
 </head>
 
@@ -13,10 +13,10 @@
         <div class="main_contents">
             <div th:replace="~{common :: header}"></div>
             <div class="inner_contens">
-                <div class="page_title">書籍登録</div>
+                <div class="page_title">書籍編集</div>
                 <div class="page_contents">
                     <form id="book_register_form" th:object="${bookMstDto}" th:action="@{/book/add}" method="post">
-                        <div class="mb30 flexarea right-align">
+                        <div class="mb30 flexarea">
                             <span>
                                 <a th:href="@{/book/index}" class="link">← 一覧へ戻る</a>
                             </span>
@@ -25,19 +25,19 @@
                             <tr>
                                 <th scope="col">書籍名:</th>
                                 <td>
-                                    <input type="text" name="title" th:field="*{title}" placeholder="書籍名を入力" />
+                                    <input type="text" name="title" th:field="*{title}" />
                                     <div class="error_msg" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
                                 </td>
                             </tr>
                             <tr>
                                 <th scope="col">ISBN:</th>
                                 <td>
-                                    <input type="text" name="isbn" th:field="*{isbn}" placeholder="ISBNを入力"/>
+                                    <input type="text" name="isbn" th:field="*{isbn}"/>
                                     <div class="error_msg" th:if="${#fields.hasErrors('isbn')}" th:errors="*{isbn}"></div>
                                 </td>
                             </tr>
                             <div class="btn_block">
-                                <input type="submit" value="保存">
+                                <input type="submit" value="編集">
                             </div>
                         </tbody>    
                     </form>
