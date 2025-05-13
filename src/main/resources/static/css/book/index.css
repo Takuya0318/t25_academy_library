@@ -138,3 +138,17 @@ caption {
 a {
   text-decoration: none; /* リンクの下線を消す */
 }
+
+.book-title {
+  display: inline-block;
+  max-width: 300px;  
+  word-wrap: break-word;
+  white-space: normal;
+}
+
+td {
+  vertical-align: top;
+  word-break: break-word;
+}
+
+

@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import io.micrometer.common.util.StringUtils;
@@ -33,8 +34,6 @@ public class BookMstService {
         List<BookMst> books = this.bookMstRepository.findLimitedBook();
         List<BookMstDto> bookMstDtoList = new ArrayList<BookMstDto>();
 
-        // 書籍の在庫数を取得
-        // FIXME: 現状は書籍ID毎にDBに問い合わせている。一度のSQLで完了させたい。
         for (int i = 0; i < books.size(); i++) {
             BookMst book = books.get(i);
             BookMstDto bookMstDto = new BookMstDto();
@@ -47,8 +46,10 @@ public class BookMstService {
         return bookMstDtoList;
     }
 
-    public String searchIsbn(String id) {
-        Optional<BookMst> bookMstOptional = bookMstRepository.selectByIsbn(Long.parseLong(id));
+    
+
+    public String searchIsbn(String isbn) {
+        Optional<BookMst> bookMstOptional = bookMstRepository.selectByisbn(isbn);
         if (bookMstOptional.isPresent()) {
             return bookMstOptional.get().getIsbn();
         } else {
@@ -70,9 +71,38 @@ public class BookMstService {
             throw e;
         }
     }
+
+    public BookMstDto findById(Long id) {
+        BookMst entity = bookMstRepository.findById(id).orElse(null);
+        if (entity == null) return null;
+     
+        BookMstDto dto = new BookMstDto();
+        dto.setId(entity.getId());
+        dto.setTitle(entity.getTitle());
+        dto.setIsbn(entity.getIsbn());
+        return dto;
+    }
+    public void update(BookMstDto bookMstDto) {
+        try {
+ 
+            BookMst bookMst = bookMstRepository.findById(bookMstDto.getId())
+            .orElseThrow(() -> new RuntimeException("書籍が見つかりません"));
+ 
+            // // AccountDtoからAccountへの変換
+            // BookMst bookMst = new BookMst();
+ 
+            bookMst.setTitle(bookMstDto.getTitle());
+            bookMst.setIsbn(bookMstDto.getIsbn());
+           ;
+ 
+            // データベースへの保存
+            this.bookMstRepository.save(bookMst);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
     
 
+    
+ 
 }
-
-
-
