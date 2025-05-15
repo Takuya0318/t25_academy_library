@@ -63,3 +63,92 @@
   color: #0000EE;
 }
 
+table th, table td {
+  border: solid 1px black;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 800px;
+  margin: auto;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+  text-align: left;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+th {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+tr:hover {
+  background-color: #f9f9f9;
+}
+
+caption {
+  caption-side: top;
+  font-size: 1.5em;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.btn_block{
+  background-color: aquamarine;
+  color:black;
+}
+
+.register-button {
+  background-color: #30ae4e;
+  color: black;
+  padding: 5px 8px;
+  text-decoration: none;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: flex-end; /* 右寄せ */
+  margin-bottom: 20px;
+}
+
+
+
+
+.trash_btn img {
+  width: 15px;
+  height: 15px;
+}
+ 
+.edit_btn img {
+  width: 15px;  
+  height: 15px;
+}
+ 
+a {
+  text-decoration: none; /* リンクの下線を消す */
+}
+
+.book-title {
+  display: inline-block;
+  max-width: 300px;  
+  word-wrap: break-word;
+  white-space: normal;
+}
+
+td {
+  vertical-align: top;
+  word-break: break-word;
+}
+
+

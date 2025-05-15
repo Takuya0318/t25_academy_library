@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+ 
+<head th:replace="~{common :: meta_header('書籍登録',~{::link},~{::script})}">
+    <title th:text="${title} + ' | MTLibrary'">書籍登録 | MTLibrary</title>
+    <link rel="stylesheet" th:href="@{/css/book/edit.css}" />
+    <script type="text/javascript" th:src="@{/js/book/add.js}"></script>
+    <script type="text/javascript">
+        window.addEventListener('DOMContentLoaded', function () {
+            /*<![CDATA[*/
+            let message = /*[[${message}]]*/ null;
+            if (message !== null && message !== '') {
+                alert(message);
+            }
+            /*]]>*/
+        });
+    </script>
+</head>
+ 
+<body>
+    <div class="contents">
+        <div th:replace="~{common :: main_sidebar}"></div>
+        <div class="main_contents">
+            <div th:replace="~{common :: header}"></div>
+            <div class="inner_contens">
+                <div class="page_title">書籍編集</div>
+                <div class="page_contents">
+                    <div th:if="${message}" class="alert alert-warning">
+                        <p th:text="${message}"></p>
+                    </div>
+ 
+                    <form id="book_register_form" th:object="${bookMstDto}" th:action="@{/book/edit}" method="post">
+                        <p class="note">＊は必須です</p>
+ 
+                        <div class="right-align" style="margin-bottom: 10px;">
+                            <a th:href="@{/book/index}" class="link">← 一覧へ戻る</a>
+                        </div>
+ 
+                        <input type="hidden" th:field="*{id}" />
+ 
+                        <div class="form_group">
+                            <label>書籍名<span class="mark">＊</span></label>
+                            <input type="text" th:field="*{title}" placeholder="書籍名を入力" />
+                            <div class="error_msg" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+                        </div>
+ 
+                        <div class="form_group">
+                            <label>ISBN<span class="mark">＊</span></label>
+                            <input type="text" th:field="*{isbn}" placeholder="ISBNを入力" />
+                            <div class="error_msg" th:if="${#fields.hasErrors('isbn')}" th:errors="*{isbn}"></div>
+                        </div>
+ 
+                        <div class="btn_block">
+                            <button type="submit" class="submit_btn">変更</button>
+                        </div>
+                    </form>
+ 
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:replace="~{common :: footer}"></div>
+</body>

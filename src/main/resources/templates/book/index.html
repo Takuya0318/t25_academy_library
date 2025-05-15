@@ -6,36 +6,94 @@
     <link rel="stylesheet" th:href="@{/css/book/index.css}" />
     <script type="text/javascript" th:src="@{/js/book/index.js}"></script>
 </head>
- 
+
+
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{common :: meta_header('書籍一覧',~{::link},~{::script})}">
+    <!-- metaやCSS・JSの共通パーツを読み込む（テンプレート共通ヘッダー） -->
+    
+    <title th:text="${title}+' | MTLibrary'"></title>
+    <!-- ページタイトルの動的設定（例：書籍一覧 | MTLibrary） -->
+
+    <link rel="stylesheet" th:href="@{/css/book/index.css}" />
+    <!-- 書籍一覧画面専用のCSSファイルを読み込む -->
+
+    <script type="text/javascript" th:src="@{/js/book/index.js}"></script>
+    <!-- 書籍一覧画面専用のJSファイルを読み込む -->
+</head>
+
 <body>
     <div class="contents">
+        <!-- 全体のコンテンツを囲む -->
+
         <div th:replace="~{common :: main_sidebar}"></div>
+        <!-- サイドバー（共通パーツ）を挿入 -->
+
         <div class="main_contents">
             <div th:replace="~{common :: header}"></div>
+            <!-- ヘッダー（共通パーツ）を挿入 -->
+
             <div class="inner_contens">
                 <div class="page_title">書籍一覧</div>
-                <!-- 書籍登録ボタン -->
-                <a th:href="@{/book/add}">
-                    <button type="button">書籍登録</button>
-                </a>
-                <!-- 書籍一覧テーブル -->
-                <table>
+                <!-- ページタイトル表示 -->
+
+                <div style="text-align: right;">
+                    <a th:href="@{/book/add}" class="btn">
+                        <!-- 書籍登録画面へのリンクボタン -->
+                        <img th:src="@{/images/icons/add.png}" alt="追加アイコン" class="icon">
+                        書籍登録
+                    </a>
+                </div>
+
+                <table bookMst="1" style="width:100%; border-collapse: collapse;">
+                    <!-- 書籍一覧テーブルの開始 -->
                     <thead>
                         <tr>
                             <th>書籍名</th>
                             <th>ISBN</th>
                         </tr>
                     </thead>
+
                     <tbody>
+                        <!-- 書籍リストをループ表示 -->
                         <tr th:each="book : ${bookMstList}">
-                            <td th:text="${book.title}">書籍名</td>
+                            <td>
+                                <!-- 編集ボタン（書籍IDをURLに埋め込む） -->
+                                <a th:href="@{/book/edit/{id}(id=${book.id})}" class="edit_btn">
+                                    <img th:src="@{/images/icons/edit.png}" alt="編集アイコン" class="edit_icon">
+                                </a>
+                                <a th:href="@{/book/delete}" class="edit_btn" onclick="return confirm('削除してもよろしいですか？');">
+                                    <img th:src="@{/images/icons/trash.png}" alt="削除アイコン" class="edit_icon">
+                                </a>
+
+                                <!-- 書籍名の表示 -->
+                                <span th:text="${book.title}">書籍名</span>
+                            </td>
+
+                            <!-- ISBNの表示 -->
                             <td th:text="${book.isbn}">ISBN</td>
                         </tr>
                     </tbody>
                 </table>
+                <!-- 書籍一覧テーブルの終了 -->
             </div>
         </div>
     </div>
+
+    <!-- ★ Flashメッセージ（リダイレクト後の一時メッセージ）を画面に埋め込む（表示制御用） -->
+    <div id="flash-message" th:if="${message}" th:attr="data-message=${message}"></div>
+
+    <!-- ★ Flashメッセージを JavaScript で alert 表示する -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const msg = document.getElementById("flash-message")?.dataset.message;
+            if (msg) {
+                alert(msg); // メッセージが存在すればアラートで表示する
+            }
+        });
+    </script>
+
+    <!-- フッター（共通パーツ）を読み込み -->
     <div th:replace="~{common :: footer}"></div>
-</body>eplace="~{common :: footer}"></div>
 </body>

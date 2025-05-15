@@ -38,3 +38,52 @@
   cursor: pointer;
   opacity: 0.6;
 }
+
+.right-align {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.form_group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form_group input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.btn_save {
+  background-color: #28a745; /* 緑色 */
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn_save:hover {
+  background-color: #218838; /* ホバー時の濃い緑 */
+}
+
+.space-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.required_note {
+  color: red;
+  font-size: 14px;
+}
+
+.required_mark {
+  color: red;
+  margin-left: 4px;
+}
