@@ -1,21 +1,15 @@
 package jp.co.metateam.library.service;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import io.micrometer.common.util.StringUtils;
-import jp.co.metateam.library.model.Account;
-import jp.co.metateam.library.model.AccountDto;
 import jp.co.metateam.library.model.BookMst;
 import jp.co.metateam.library.model.BookMstDto;
 import jp.co.metateam.library.repository.BookMstRepository;
@@ -24,85 +18,86 @@ import jp.co.metateam.library.repository.BookMstRepository;
 public class BookMstService {
 
     private final BookMstRepository bookMstRepository;
-    
+
     @Autowired
-    public BookMstService(BookMstRepository bookMstRepository){
+    public BookMstService(BookMstRepository bookMstRepository) {
         this.bookMstRepository = bookMstRepository;
     }
-    
-    public List<BookMstDto> findAvailableWithStockCount() {
-        List<BookMst> books = this.bookMstRepository.findLimitedBook();
-        List<BookMstDto> bookMstDtoList = new ArrayList<BookMstDto>();
 
-        for (int i = 0; i < books.size(); i++) {
-            BookMst book = books.get(i);
-            BookMstDto bookMstDto = new BookMstDto();
-            bookMstDto.setId(book.getId());
-            bookMstDto.setIsbn(book.getIsbn());
-            bookMstDto.setTitle(book.getTitle());
-            bookMstDtoList.add(bookMstDto);
+    // 一覧取得（論理削除されていない書籍のみ）
+    public List<BookMstDto> findAvailableWithStockCount() {
+        List<BookMst> books = this.bookMstRepository.findAllNotDeleted(); // ← 修正済み
+        List<BookMstDto> bookMstDtoList = new ArrayList<>();
+
+        for (BookMst book : books) {
+            BookMstDto dto = new BookMstDto();
+            dto.setId(book.getId());
+            dto.setIsbn(book.getIsbn());
+            dto.setTitle(book.getTitle());
+            bookMstDtoList.add(dto);
         }
 
         return bookMstDtoList;
     }
 
-    
-
     public String searchIsbn(String isbn) {
         Optional<BookMst> bookMstOptional = bookMstRepository.selectByisbn(isbn);
-        if (bookMstOptional.isPresent()) {
-            return bookMstOptional.get().getIsbn();
-        } else {
-            return null;
-        }
+        return bookMstOptional.map(BookMst::getIsbn).orElse(null);
     }
+
+    public String searchActiveIsbn(String isbn) {
+        Optional<BookMst> bookMstOptional = bookMstRepository.selectActiveByIsbn(isbn);
+        return bookMstOptional.map(BookMst::getIsbn).orElse(null);
+    }
+
     @Transactional
     public void save(BookMstDto bookmstDto) {
-        try {
-            // BookMstDtoからBookMstへの変換
-            BookMst bookMst = new BookMst();
-
-            bookMst.setTitle(bookmstDto.getTitle());
-            bookMst.setIsbn(bookmstDto.getIsbn());
-            
-            // データベースへの保存
-            this.bookMstRepository.save(bookMst);
-        } catch (Exception e) {
-            throw e;
-        }
+        BookMst bookMst = new BookMst();
+        bookMst.setTitle(bookmstDto.getTitle());
+        bookMst.setIsbn(bookmstDto.getIsbn());
+        bookMst.setDeletedFlag(false); // 明示的に未削除として保存
+        this.bookMstRepository.save(bookMst);
     }
 
     public BookMstDto findById(Long id) {
         BookMst entity = bookMstRepository.findById(id).orElse(null);
-        if (entity == null) return null;
-     
+        if (entity == null || entity.getDeletedAt() != null)
+            return null;
+
         BookMstDto dto = new BookMstDto();
         dto.setId(entity.getId());
         dto.setTitle(entity.getTitle());
         dto.setIsbn(entity.getIsbn());
         return dto;
     }
-    public void update(BookMstDto bookMstDto) {
-        try {
- 
-            BookMst bookMst = bookMstRepository.findById(bookMstDto.getId())
-            .orElseThrow(() -> new RuntimeException("書籍が見つかりません"));
- 
-            // // AccountDtoからAccountへの変換
-            // BookMst bookMst = new BookMst();
- 
-            bookMst.setTitle(bookMstDto.getTitle());
-            bookMst.setIsbn(bookMstDto.getIsbn());
-           ;
- 
-            // データベースへの保存
-            this.bookMstRepository.save(bookMst);
-        } catch (Exception e) {
-            throw e;
-        }
-    }
-    
 
-    
- 
+    public void update(BookMstDto bookMstDto) {
+        BookMst bookMst = bookMstRepository.findById(bookMstDto.getId())
+                .orElseThrow(() -> new RuntimeException("書籍が見つかりません"));
+
+        bookMst.setTitle(bookMstDto.getTitle());
+        bookMst.setIsbn(bookMstDto.getIsbn());
+
+        this.bookMstRepository.save(bookMst);
+    }
+
+    @Transactional
+    public void deleteById(Long id) {
+        Optional<BookMst> bookOpt = bookMstRepository.findById(id);
+
+        if (bookOpt.isEmpty()) {
+            throw new IllegalArgumentException("書籍が存在しません。");
+        }
+
+        BookMst book = bookOpt.get();
+
+        if (Boolean.TRUE.equals(book.getDeletedFlag())) {
+            throw new IllegalArgumentException("この書籍は既に削除されています。");
+        }
+
+        book.setDeletedFlag(true); // フラグを立てて論理削除
+        book.setDeletedAt(Timestamp.from(Instant.now())); 
+        bookMstRepository.save(book);
+    }
+
 }
